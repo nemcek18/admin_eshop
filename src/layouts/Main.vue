@@ -4,7 +4,7 @@
   <q-layout-header>
     <q-toolbar>
         <q-btn flat round dense icon="menu" @click="left = !left" class="q-mr-md"/>
-        <q-toolbar-title>MyESHOP - ADMIN<span slot="subtitle">Some subtitle</span></q-toolbar-title>
+        <q-toolbar-title>Admin<span slot="subtitle">wimo</span></q-toolbar-title>
     </q-toolbar>
   </q-layout-header>
 
@@ -19,7 +19,7 @@
   </q-page-container>
 
   <q-layout-footer>
-    <div class="text-center q-pa-md">Copyright (C) 2018, Homer Simpson</div>
+    <div class="text-center q-pa-md">Copyright (C) 2020, Wimo</div>
   </q-layout-footer>
 </q-layout>
 </template>

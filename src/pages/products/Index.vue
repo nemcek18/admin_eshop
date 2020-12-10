@@ -100,7 +100,11 @@ export default {
         axios
           .delete(`http://127.0.0.1:8000/api/products/${id}`)
           .then(() => {
-            this.serverData[rowIndex].id = 'DELETED'
+            // this.serverData[rowIndex].id = 'DELETED'
+            this.request({
+              pagination: this.serverPagination,
+              filter: this.filter
+            })
             this.$q.notify({ type: 'positive', timeout: 2000, message: 'The product has been deleted.' })
           })
           .catch(error => {
@@ -108,7 +112,7 @@ export default {
             console.log(error)
           })
       }).catch(() => {
-        // cancel - do nothing?
+        // cancel
       })
     }
   },

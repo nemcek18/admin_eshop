@@ -3,13 +3,16 @@
     <q-card>
         <q-card-title>Edit</q-card-title>
         <q-card-main>
-            <q-field :count="30">
-                <q-input float-label="Brand" v-model="productBrand" max-length="30" />
+            <q-field :count="250">
+                <q-input float-label="Brand" v-model="productBrand" max-length="250" />
             </q-field>
-            <q-field :count="30">
-                <q-input float-label="Model" v-model="productModel" max-length="30" />
+            <q-field :count="250">
+                <q-input float-label="Model" v-model="productModel" max-length="250" />
             </q-field>
-            <q-field :count="500">
+            <q-field>
+                <q-input float-label="Price" v-model.number="productPrice" type="number" />
+            </q-field>
+            <q-field :count="5000">
                 <q-input
                     float-label="Description"
                     v-model="productDescription"
@@ -40,6 +43,7 @@ export default {
     return {
       productBrand: '',
       productModel: '',
+      productPrice: 0,
       productDescription: ''
     }
   },
@@ -62,6 +66,7 @@ export default {
       .then(response => {
         this.productBrand = response.data.brand
         this.productModel = response.data.model
+        this.productPrice = response.data.price
         this.productDescription = response.data.description
       })
       .catch(error => {
@@ -71,7 +76,7 @@ export default {
   },
   computed: {
     productData: function () {
-      return { brand: this.productBrand, model: this.productModel, description: this.productDescription }
+      return { brand: this.productBrand, model: this.productModel, price: this.productPrice, description: this.productDescription }
     }
   }
 }

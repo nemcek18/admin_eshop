@@ -32,7 +32,7 @@
 </style>
 
 <script>
-import MainLayoutDrawer from 'components/layouts/Main/Drawer.vue'
+import MainLayoutDrawer from 'components/layouts/main/Drawer.vue'
 
 export default {
   components: {

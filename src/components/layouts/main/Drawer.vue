@@ -11,3 +11,7 @@
     </q-list>
 </div>
 </template>
+
+<script>
+export default { name: 'MainLayoutDrawer' }
+</script>

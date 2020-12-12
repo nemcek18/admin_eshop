@@ -3,7 +3,7 @@
     <q-card>
         <q-card-title>Edit</q-card-title>
         <q-card-main>
-            <div>
+            <div class="q-pb-md">
                 <q-select
                     v-model="select"
                     float-label="Category"
@@ -18,11 +18,11 @@
                 <q-input float-label="Model" v-model="productModel" max-length="50" />
                 <p v-if="errors.model"><span style="color:red">{{ errors.model[0] }}</span></p>
             </q-field>
-            <q-field>
+            <q-field class="q-pb-md">
                 <q-input float-label="Price" v-model.number="productPrice" type="number" />
                 <p v-if="errors.price"><span style="color:red">{{ errors.price[0] }}</span></p>
             </q-field>
-            <q-field :count="500">
+            <q-field  class="q-pb-md" :count="500">
                 <q-input
                     float-label="Description"
                     v-model="productDescription"
@@ -31,6 +31,28 @@
                     rows="5"
                 />
                 <p v-if="errors.description"><span style="color:red">{{ errors.description[0] }}</span></p>
+            </q-field>
+            <q-list>
+                <q-list-header>Images</q-list-header>
+                    <q-item v-for="(image, index) in productImages" :key="image.id">
+                        <q-item-side>
+                            <!-- <q-item-tile label>{{product.url}}</q-item-tile> -->
+                            <img :src= image.url style="max-height: 150px; max-width: 150px;">
+                        </q-item-side>
+                        <q-item-side right>
+                            <q-btn @click="deleteFromList(index)" color="red" size="md" label="x" />
+                        </q-item-side>
+
+                    </q-item>
+            </q-list>
+            <q-field helper="Supported format: JPG, max. file size: 300KiB" class="q-mt-lg">
+                <q-uploader
+                    float-label="Images"
+                    extensions=".jpg,.jpeg,.png"
+                    url="http://127.0.0.1:8000/api/products/upload"
+                    multiple
+                    auto-expand
+                />
             </q-field>
         </q-card-main>
         <q-card-actions class="q-mt-md">
@@ -80,7 +102,8 @@ export default {
         }
       ],
       select: '',
-      errors: []
+      errors: [],
+      productImages: []
     }
   },
   methods: {
@@ -95,6 +118,10 @@ export default {
           console.error(error)
           this.errors = error.response.data.errors
         })
+    },
+    deleteFromList (index) {
+      this.productImages.splice(index, 1)
+      console.log(index)
     }
   },
   mounted () {
@@ -106,6 +133,7 @@ export default {
         this.productModel = response.data.model
         this.productPrice = response.data.price
         this.productDescription = response.data.description
+        this.productImages = response.data.images
       })
       .catch(error => {
         this.$q.notify({ type: 'negative', timeout: 2000, message: 'Loading product: an error has been occured.' })

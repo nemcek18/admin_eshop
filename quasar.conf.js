@@ -70,7 +70,8 @@ module.exports = function (ctx) {
         'QTh',
         'QTr',
         'QTd',
-        'QTableColumns'
+        'QTableColumns',
+        'QSelect'
       ],
       directives: [
         'Ripple'

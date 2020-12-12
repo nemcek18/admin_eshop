@@ -11,8 +11,11 @@
       binary-state-sort
       >
       <q-tr slot="body" slot-scope="props" :props="props">
-        <q-td key="id" :props="props">
-          <span>{{ props.row.id }}</span>
+        <q-td key="product_id" :props="props">
+          <span>{{ props.row.product_id }}</span>
+        </q-td>
+        <q-td key="name" :props="props">
+          <span>{{ props.row.name }}</span>
         </q-td>
         <q-td key="brand" :props="props">
           <span>{{ props.row.brand }}</span>
@@ -24,10 +27,10 @@
           <span>{{ props.row.price }}</span>
         </q-td>
         <q-td class="text-right">
-          <div v-if="props.row.id == 'DELETED'">DELETED</div>
+          <div v-if="props.row.product_id == 'DELETED'">DELETED</div>
           <div v-else>
-            <q-btn round icon="edit" class="q-mr-xs" @click="$router.push('/products/' + props.row.id + '/edit')" />
-            <q-btn round icon="delete" @click="destroy(props.row.id, props.row.brand, props.row.model, props.row.__index)"/>
+            <q-btn round icon="edit" class="q-mr-xs" @click="$router.push('/products/' + props.row.product_id + '/edit')" />
+            <q-btn round icon="delete" @click="destroy(props.row.product_id, props.row.brand, props.row.name, props.row.model, props.row.__index)"/>
           </div>
         </q-td>
       </q-tr>
@@ -42,7 +45,8 @@ export default {
   data () {
     return {
       columns: [
-        { name: 'id', label: 'ID', field: 'id', sortable: false, align: 'left' },
+        { name: 'product_id', label: 'ID', field: 'product_id', sortable: true, align: 'left' },
+        { name: 'name', label: 'Category', field: 'name', sortable: true, align: 'left' },
         { name: 'brand', label: 'Brand', field: 'brand', sortable: true, align: 'left' },
         { name: 'model', label: 'Model', field: 'model', sortable: true, align: 'left' },
         { name: 'price', label: 'Price', field: 'price', sortable: true, align: 'left' },
@@ -54,8 +58,8 @@ export default {
         page: 1,
         rowsNumber: 1000, // the number of total rows in DB
         rowsPerPage: 10,
-        sortBy: 'brand',
-        descending: true
+        sortBy: 'product_id',
+        descending: false
       },
       serverData: []
     }
@@ -89,7 +93,7 @@ export default {
         })
     },
 
-    destroy (id, brand, model, rowIndex) {
+    destroy (productId, name, brand, model, rowIndex) {
       this.$q.dialog({
         title: 'Delete',
         message: 'Are you sure to delete ' + brand + ' ' + model + '?',
@@ -98,7 +102,7 @@ export default {
         cancel: true
       }).then(() => {
         axios
-          .delete(`http://127.0.0.1:8000/api/products/${id}`)
+          .delete(`http://127.0.0.1:8000/api/products/${productId}`)
           .then(() => {
             // this.serverData[rowIndex].id = 'DELETED'
             this.request({

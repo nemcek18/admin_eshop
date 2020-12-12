@@ -39,6 +39,7 @@
                             <!-- <q-item-tile label>{{product.url}}</q-item-tile> -->
                             <img :src= image.url style="max-height: 150px; max-width: 150px;">
                         </q-item-side>
+                        <q-item-main />
                         <q-item-side right>
                             <q-btn @click="deleteFromList(index)" color="red" size="md" label="x" />
                         </q-item-side>
@@ -49,9 +50,11 @@
                 <q-uploader
                     float-label="Images"
                     extensions=".jpg,.jpeg,.png"
-                    url="http://127.0.0.1:8000/api/products/upload"
+                    :upload-factory="uploadFile"
+                    url=""
                     multiple
                     auto-expand
+                    stack-label="upload image"
                 />
             </q-field>
         </q-card-main>
@@ -103,7 +106,9 @@ export default {
       ],
       select: '',
       errors: [],
-      productImages: []
+      productImages: [],
+      removedImages: [],
+      uploadedImages: []
     }
   },
   methods: {
@@ -120,8 +125,30 @@ export default {
         })
     },
     deleteFromList (index) {
+      this.removedImages.push(this.productImages[index])
       this.productImages.splice(index, 1)
       console.log(index)
+    },
+    uploadFile (file, updateProgress) {
+      const fd = new FormData()
+      fd.append('file', file)
+      updateProgress(0)
+      return new Promise((resolve, reject) => {
+        this.$axios.post('http://127.0.0.1:8000/api/products/upload',
+          fd,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress: (progressEvent) => {
+              updateProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100) / 100)
+            }
+          })
+          .then(response => {
+            this.uploadedImages.push(response.data.path)
+            console.log(response.data.path)
+            resolve(file)
+          })
+          .catch(error => reject(error))
+      })
     }
   },
   mounted () {
@@ -142,7 +169,14 @@ export default {
   },
   computed: {
     productData: function () {
-      return { name: this.select, brand: this.productBrand, model: this.productModel, price: this.productPrice, description: this.productDescription }
+      return { name: this.select,
+        brand: this.productBrand,
+        model: this.productModel,
+        price: this.productPrice,
+        description: this.productDescription,
+        removedImages: this.removedImages,
+        uploadedImages: this.uploadedImages
+      }
     }
   }
 }

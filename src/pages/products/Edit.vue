@@ -42,7 +42,15 @@
                         <q-item-side right>
                             <q-btn @click="deleteMain(index)" color="red" size="md" label="x" />
                         </q-item-side>
-
+                    </q-item>
+                    <q-item v-for="(image, index) in uploadedImages" :key="image">
+                        <q-item-side>
+                            <img :src= image style="max-height: 150px; max-width: 150px;">
+                        </q-item-side>
+                        <q-item-main />
+                        <q-item-side right>
+                            <q-btn @click="deleteMainUploaded(index)" color="red" size="md" label="x" />
+                        </q-item-side>
                     </q-item>
             </q-list>
             <p v-if="errors.images"><span style="color:red">{{ errors.images[0] }}</span></p>
@@ -57,7 +65,15 @@
                         <q-item-side right>
                             <q-btn @click="deleteGallery(index)" color="red" size="md" label="x" />
                         </q-item-side>
-
+                    </q-item>
+                    <q-item v-for="(image, index) in galleryUpload" :key="image">
+                        <q-item-side>
+                            <img :src= image style="max-height: 150px; max-width: 150px;">
+                        </q-item-side>
+                        <q-item-main />
+                        <q-item-side right>
+                            <q-btn @click="deleteGalleryUploaded(index)" color="red" size="md" label="x" />
+                        </q-item-side>
                     </q-item>
             </q-list>
             <p v-if="errors.gallery_images"><span style="color:red">{{ errors.gallery_images[0] }}</span></p>
@@ -185,10 +201,34 @@ export default {
       this.galleryImages.splice(index, 1)
       console.log(index)
     },
+    deleteGalleryUploaded (index) {
+      var dataToRemove = { images: [this.galleryUpload[index]] }
+      this.galleryUpload.splice(index, 1)
+      axios
+        .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
+        .then(response => {
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
     deleteMain (index) {
       this.removedImages.push(this.productImages[index])
       this.productImages.splice(index, 1)
       console.log(index)
+    },
+    deleteMainUploaded (index) {
+      var dataToRemove = { images: [this.uploadedImages[index]] }
+      this.uploadedImages.splice(index, 1)
+      axios
+        .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
+        .then(response => {
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     uploadFile (file, updateProgress) {
       const fd = new FormData()
@@ -211,6 +251,7 @@ export default {
               this.uploadedImages.push(response.data.path)
             }
             resolve(file)
+            this.$refs.uploader.reset()
           })
           .catch(error => reject(error))
       })

@@ -33,6 +33,35 @@
                 />
                 <p v-if="errors.description"><span style="color:red">{{ errors.description[0] }}</span></p>
             </q-field>
+                        <q-list>
+                <q-list-header>Main image</q-list-header>
+                    <q-item v-for="(image, index) in uploadedImages" :key="image">
+                        <q-item-side>
+                            <img :src= image style="max-height: 150px; max-width: 150px;">
+                        </q-item-side>
+                        <q-item-main />
+                        <q-item-side right>
+                            <q-btn @click="deleteMain(index)" color="red" size="md" label="x" />
+                        </q-item-side>
+
+                    </q-item>
+            </q-list>
+            <p v-if="errors.images"><span style="color:red">{{ errors.images[0] }}</span></p>
+            <div id="separator"></div>
+            <q-list>
+                <q-list-header>Gallery images</q-list-header>
+                    <q-item v-for="(image, index) in galleryUpload" :key="image">
+                        <q-item-side>
+                            <img :src= image style="max-height: 150px; max-width: 150px;">
+                        </q-item-side>
+                        <q-item-main />
+                        <q-item-side right>
+                            <q-btn @click="deleteGallery(index)" color="red" size="md" label="x" />
+                        </q-item-side>
+
+                    </q-item>
+            </q-list>
+            <p v-if="errors.gallery_images"><span style="color:red">{{ errors.gallery_images[0] }}</span></p>
             <p class="caption" id=first_caption>toggle OFF: image will be uploaded as main image</p>
             <p class="caption">toggle ON: image will be uploaded as gallery image</p>
             <q-toggle v-model="type_gallery" color="dark" />
@@ -48,9 +77,6 @@
                     stack-label="upload image"
                 />
             </q-field>
-            <div id="separator"></div>
-            <p v-if="errors.images"><span style="color:red">{{ errors.images[0] }}</span></p>
-            <p v-if="errors.gallery_images"><span style="color:red">{{ errors.gallery_images[0] }}</span></p>
         </q-card-main>
         <q-card-actions class="q-mt-md">
             <div class="row justify-end full-width docs-btn">
@@ -145,12 +171,6 @@ export default {
         })
         .catch(error => {
           this.errors = error.response.data.errors
-          if (this.errors.images) {
-            this.cancel()
-            this.$refs.uploader.reset()
-            this.uploadedImages = []
-            this.galleryUpload = []
-          }
         })
     },
     uploadFile (file, updateProgress) {
@@ -174,9 +194,34 @@ export default {
               this.uploadedImages.push(response.data.path)
             }
             resolve(file)
+            this.$refs.uploader.reset()
           })
           .catch(error => reject(error))
       })
+    },
+    deleteGallery (index) {
+      var dataToRemove = { images: [this.galleryUpload[index]] }
+      this.galleryUpload.splice(index, 1)
+      axios
+        .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
+        .then(response => {
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    deleteMain (index) {
+      var dataToRemove = { images: [this.uploadedImages[index]] }
+      this.uploadedImages.splice(index, 1)
+      axios
+        .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
+        .then(response => {
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     cancel () {
       if (this.uploadedImages.length > 0 || this.galleryUpload.length > 0) {

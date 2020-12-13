@@ -73,7 +73,8 @@ module.exports = function (ctx) {
         'QTableColumns',
         'QSelect',
         'QItemSeparator',
-        'QItemTile'
+        'QItemTile',
+        'QToggle'
       ],
       directives: [
         'Ripple'

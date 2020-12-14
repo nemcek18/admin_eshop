@@ -240,10 +240,10 @@ export default {
       this.$q.notify({ type: 'warning', timeout: 2000, message: 'Product has not been created.' })
     }
   },
-  beforeRouteLeave (to, from, next) {
+  /* beforeRouteLeave (to, from, next) {
     this.cancel()
     next()
-  },
+  }, */
   computed: {
     productData: function () {
       return { name: this.select,

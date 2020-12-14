@@ -188,18 +188,14 @@ export default {
         })
         .catch(error => {
           this.errors = error.response.data.errors
-          if (this.errors.images) {
-            this.cancel()
-            this.$refs.uploader.reset()
-            this.uploadedImages = []
-            this.galleryUpload = []
-          }
+          this.$q.notify({ type: 'negative', timeout: 2000, message: 'The product has not been updated.' })
         })
     },
     deleteGallery (index) {
       this.galleryRemove.push(this.galleryImages[index])
       this.galleryImages.splice(index, 1)
       console.log(index)
+      this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed from gallery folder' })
     },
     deleteGalleryUploaded (index) {
       var dataToRemove = { images: [this.galleryUpload[index]] }
@@ -207,7 +203,7 @@ export default {
       axios
         .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
         .then(response => {
-          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed from gallery folder' })
         })
         .catch(error => {
           console.error(error)
@@ -217,6 +213,7 @@ export default {
       this.removedImages.push(this.productImages[index])
       this.productImages.splice(index, 1)
       console.log(index)
+      this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed main folder' })
     },
     deleteMainUploaded (index) {
       var dataToRemove = { images: [this.uploadedImages[index]] }
@@ -224,7 +221,7 @@ export default {
       axios
         .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
         .then(response => {
-          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed main folder' })
         })
         .catch(error => {
           console.error(error)
@@ -288,13 +285,18 @@ export default {
         axios
           .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
           .then(response => {
-            this.$q.notify({ type: 'negative', timeout: 2000, message: 'Images has not been updated.' })
+            // this.$q.notify({ type: 'warning', timeout: 2000, message: 'Product has not been updated.' })
           })
           .catch(error => {
             console.error(error)
           })
       }
+      this.$q.notify({ type: 'warning', timeout: 2000, message: 'Product has not been updated.' })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.cancel()
+    next()
   },
   mounted () {
     this.getData()

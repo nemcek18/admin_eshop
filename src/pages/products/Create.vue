@@ -171,6 +171,7 @@ export default {
         })
         .catch(error => {
           this.errors = error.response.data.errors
+          this.$q.notify({ type: 'negative', timeout: 2000, message: 'The product has not been created.' })
         })
     },
     uploadFile (file, updateProgress) {
@@ -205,7 +206,7 @@ export default {
       axios
         .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
         .then(response => {
-          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed from gallery folder' })
         })
         .catch(error => {
           console.error(error)
@@ -217,7 +218,7 @@ export default {
       axios
         .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
         .then(response => {
-          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed' })
+          this.$q.notify({ type: 'positive', timeout: 2000, message: 'Image was removed main folder' })
         })
         .catch(error => {
           console.error(error)
@@ -230,13 +231,18 @@ export default {
         axios
           .post(`http://127.0.0.1:8000/api/products/remove`, dataToRemove)
           .then(response => {
-            this.$q.notify({ type: 'negative', timeout: 2000, message: 'Images has not been updated.' })
+            // this.$q.notify({ type: 'negative', timeout: 2000, message: 'Product has not been updated.' })
           })
           .catch(error => {
             console.error(error)
           })
       }
+      this.$q.notify({ type: 'warning', timeout: 2000, message: 'Product has not been created.' })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.cancel()
+    next()
   },
   computed: {
     productData: function () {
